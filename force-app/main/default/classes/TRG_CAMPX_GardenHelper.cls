@@ -5,7 +5,7 @@
  * @version         1.0
  * 
  * @group           Helpers
- * @group-content   ../../ApexDocContent/Accounts.htm
+ * @group-content   ../../ApexDocContent/
  *
  * @description     Helper class for on TRG_CAMPX_GardenHandler.
  * @comments
