@@ -45,6 +45,7 @@ public with sharing class TRG_CAMPX_GardenHelper {
             System.debug('MVC:: currentGarden: ' + currentGarden);
             gardensToInsert.add(currentGarden);
         }
+        
         try {
             insert gardensToInsert;
         } catch (Exception e) {
