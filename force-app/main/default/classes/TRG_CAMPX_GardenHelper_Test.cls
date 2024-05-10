@@ -5,7 +5,7 @@
  * @version         1.0
  * 
  * @group           Test
- * @group-content   ../../ApexDocContent/Accounts.htm
+ * @group-content   ../../ApexDocContent/
  *
  * @description     Test class for on TRG_CAMPX_GardenHelper.
  * @comments
@@ -22,9 +22,6 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
      * @author      manvil95
      * @date        10/05/2024
      * @modifiedBy
-     * 
-     * @param       newTriggerList : Trigger.new
-     * 
      * @description When a new garden record is created, each field should be populated with its 
      *              predefined default value if it's blank.
      * @comments

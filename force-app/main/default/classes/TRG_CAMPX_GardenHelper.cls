@@ -5,7 +5,7 @@
  * @version         1.0
  * 
  * @group           Helpers
- * @group-content   ../../ApexDocContent/Accounts.htm
+ * @group-content   ../../ApexDocContent/
  *
  * @description     Helper class for on TRG_CAMPX_GardenHandler.
  * @comments
@@ -25,26 +25,31 @@ public with sharing class TRG_CAMPX_GardenHelper {
     **********************************************************************************************/
     public static void initializeGardenFieldsUponRecordCreation(List<CAMPX__Garden__c> newTriggerList) {
         List<CAMPX__Garden__c> gardensToInsert = new List<CAMPX__Garden__c>();
-
+        
         for (CAMPX__Garden__c currentGarden : newTriggerList) {
             if (currentGarden.CAMPX__Status__c == null || currentGarden.CAMPX__Status__c == '') {
                 currentGarden.CAMPX__Status__c = 'Awaiting Resources';
             }
+            
             if (currentGarden.CAMPX__Max_Plant_Count__c == null) {
                 currentGarden.CAMPX__Max_Plant_Count__c = 100;
             }
+            
             if (currentGarden.CAMPX__Minimum_Plant_Count__c == null) {
                 currentGarden.CAMPX__Minimum_Plant_Count__c = 1;
             }
+            
             if (currentGarden.CAMPX__Total_Plant_Count__c == null) {
                 currentGarden.CAMPX__Total_Plant_Count__c = 0;
             }
+            
             if (currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c == null) {
                 currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c = 0;
             }
-            System.debug('MVC:: currentGarden: ' + currentGarden);
+            
             gardensToInsert.add(currentGarden);
         }
+        
         try {
             insert gardensToInsert;
         } catch (Exception e) {
