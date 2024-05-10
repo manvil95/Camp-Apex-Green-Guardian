@@ -36,4 +36,15 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
     public override void beforeInsert() {
         TRG_CAMPX_GardenHelper.initializeGardenFieldsUponRecordCreation(this.listNew);
     }
+    
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        10/05/2024
+     * @modifiedBy
+     * @description Handler method on after insert.
+     * @comments
+    **************************************************************************************************/
+    public override void afterInsert() {
+        TRG_CAMPX_GardenHelper.CreateTaskForNewGardeningManagers(this.listNew);
+    }
 }
