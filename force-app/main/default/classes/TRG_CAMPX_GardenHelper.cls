@@ -18,6 +18,41 @@ public with sharing class TRG_CAMPX_GardenHelper {
      * @modifiedBy
      * 
      * @param       newTriggerList : Trigger.new
+     * @param       oldTriggerMap  : Trigger.oldMap
+     * 
+     * @description When a new garden record is created and a manager is assigned, create a new 
+     *              Task record and assign it to the manager
+     * @comments
+    **********************************************************************************************/
+    public static void CreateTaskForNewGardeningManagers(List<CAMPX__Garden__c> newTriggerList, Map<Id, CAMPX__Garden__c> oldTriggerMap) {
+        List<Task> newTasks = new List<Task>();
+        List<Task> taskToInsert = new List<Task>();
+        
+        for (CAMPX__Garden__c currentGarden : newTriggerList) {
+            if (currentGarden.CAMPX__Manager__c != null || (currentGarden.CAMPX__Manager__c != null && oldTriggerMap?.get(currentGarden.Id).CAMPX__Manager__c != currentGarden.CAMPX__Manager__c)) {
+                Task newTask = new Task(
+                    WhatId  = currentGarden.Id,
+                    OwnerId = currentGarden.CAMPX__Manager__c,
+                    Subject = 'Acquire Plants'
+                );
+                
+                taskToInsert.add(newTask);
+            }
+        }
+        
+        try {
+            insert taskToInsert;
+        } catch (Exception e) {
+            System.debug(e.getMessage());
+        }
+    }
+
+    /**********************************************************************************************
+     * @author      manvil95
+     * @date        10/05/2024
+     * @modifiedBy
+     * 
+     * @param       newTriggerList : Trigger.new
      * 
      * @description When a new garden record is created, each field should be populated with its 
      *              predefined default value if it's blank.
