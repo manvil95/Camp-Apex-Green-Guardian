@@ -1,5 +1,5 @@
 @isTest
-    private class TriggerHandler_Test {
+private class TriggerHandler_Test {
 
     private static final String TRIGGER_CONTEXT_ERROR = 'Trigger handler called outside of Trigger execution';
 
@@ -274,4 +274,4 @@
 
     }
         
-    }
+}
