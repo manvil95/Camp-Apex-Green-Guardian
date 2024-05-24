@@ -38,7 +38,6 @@ public with sharing class TRG_CAMPX_PlantHelper {
                                                                                 WHERE Id IN :gardenParentsIds 
                                                                                 WITH USER_MODE]);
         
-        System.debug('gardenParents ' + gardenParents);
         for (CAMPX__Plant__c currentPlant : newTriggerList) {
             if (currentPlant.CAMPX__Soil_Type__c == null) {
                 currentPlant.CAMPX__Soil_Type__c = 'All Purpose Potting Soil';
