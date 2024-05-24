@@ -15,7 +15,23 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
     
     @TestSetup
     static void makeData(){
-        
+        // Create a profile for Admin
+        Profile adminProfile = [SELECT Id FROM Profile WHERE Name = 'System Administrator' LIMIT 1];
+
+        // Create a user with the admin profile
+        User adminUser = new User(
+            FirstName           = 'Test',
+            LastName            = 'Admin',
+            Alias               = 'tadmin',
+            Email               = 'testadmin@example.com',
+            Username            = 'manvil95@campapexgreen.com', // Ensure unique username
+            EmailEncodingKey    = 'UTF-8',
+            TimeZoneSidKey      = 'Europe/Madrid',
+            LocaleSidKey        = 'en_US',
+            LanguageLocaleKey   = 'en_US',
+            ProfileId           = adminProfile.Id
+        );
+        insert adminUser;
     }
 
     /**************************************************************************************************
@@ -204,6 +220,57 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
         // Verify task ownership and subject
         for (Task currentTask : createdTasks) {
             System.assertEquals(testGardens[0].CAMPX__Manager__c, currentTask.OwnerId, 'Task owner should match the Garden manager');
+            System.assertEquals('Acquire Plants', currentTask.Subject, 'Task subject should match the predefined value');
+        }
+    }
+
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        10/05/2024
+     * @modifiedBy
+     * 
+     * @description 
+     * @comments
+    **************************************************************************************************/
+    @isTest
+    static void testReassignTasks() {
+        // Create test Garden records
+        List<CAMPX__Garden__c> testGardens = new List<CAMPX__Garden__c>();
+        for (Integer i = 0; i < 5; i++) {
+            CAMPX__Garden__c currentGarden = new CAMPX__Garden__c(
+                Name = 'Garden ' + i,
+                CAMPX__Manager__c = UserInfo.getUserId()
+            );
+            testGardens.add(currentGarden);
+        }
+        
+        User u = [SELECT Id FROM User WHERE Username = 'manvil95@campapexgreen.com' LIMIT 1];
+        
+        insert testGardens;
+        List<CAMPX__Garden__c> updateGardens = new List<CAMPX__Garden__c>();
+        for (CAMPX__Garden__c garden : testGardens) {
+            garden.CAMPX__Manager__c = u.Id;
+            updateGardens.add(garden);
+        }        
+        // Call the method being tested
+        Test.startTest();
+        
+        update updateGardens;
+
+        Test.stopTest();
+
+        List<CAMPX__Garden__c> updatedGardens = [SELECT Id, CAMPX__Manager__c FROM CAMPX__Garden__c];
+        // Verify that tasks have been created for the Garden managers
+        List<Task> createdTasks = [SELECT Id, OwnerId, WhatId, Subject FROM Task WHERE WhatId IN :updatedGardens];
+        System.assertEquals(updatedGardens.size(), createdTasks.size(), 'Number of created tasks should match number of Garden records');
+        
+        // Verify task ownership and subject
+        for (CAMPX__Garden__c updated : updatedGardens) {
+            System.assertEquals(updated.CAMPX__Manager__c, u.Id, 'Task owner should match the Garden manager');
+        }
+        
+        for (Task currentTask : createdTasks) {
+            System.assertEquals(updatedGardens[0].CAMPX__Manager__c, currentTask.OwnerId, 'Task owner should match the Garden manager');
             System.assertEquals('Acquire Plants', currentTask.Subject, 'Task subject should match the predefined value');
         }
     }
