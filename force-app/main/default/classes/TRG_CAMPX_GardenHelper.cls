@@ -20,7 +20,7 @@ public with sharing class TRG_CAMPX_GardenHelper {
      * @param       newTriggerList : Trigger.new
      * @param       oldTriggerMap  : Trigger.oldMap
      * 
-     * @description When a new garden record is created and a manager is assigned, create a new 
+     * @description When a new garden record is created/update and a manager is assigned, create a new 
      *              Task record and assign it to the manager
      * @comments
     **********************************************************************************************/
@@ -29,7 +29,12 @@ public with sharing class TRG_CAMPX_GardenHelper {
         List<Task> taskToInsert = new List<Task>();
         
         for (CAMPX__Garden__c currentGarden : newTriggerList) {
-            if (currentGarden.CAMPX__Manager__c != null || (currentGarden.CAMPX__Manager__c != null && oldTriggerMap?.get(currentGarden.Id).CAMPX__Manager__c != currentGarden.CAMPX__Manager__c)) {
+            if (currentGarden.CAMPX__Manager__c != null && oldTriggerMap == null
+                    || (
+                            currentGarden.CAMPX__Manager__c != null 
+                            && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c != currentGarden.CAMPX__Manager__c
+                        )
+            ) {
                 Task newTask = new Task(
                     WhatId  = currentGarden.Id,
                     OwnerId = currentGarden.CAMPX__Manager__c,
