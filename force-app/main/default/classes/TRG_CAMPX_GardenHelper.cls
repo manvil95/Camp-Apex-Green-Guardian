@@ -74,7 +74,7 @@ public with sharing class TRG_CAMPX_GardenHelper {
         Set<Id> gardenIds = new Set<Id>();
         
         for (CAMPX__Garden__c currentGarden : newTriggerList) {
-            if ((currentGarden.CAMPX__Manager__c == null || currentGarden.CAMPX__Manager__c == '')
+            if (currentGarden.CAMPX__Manager__c == null
                     && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c != null 
                     && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c != currentGarden.CAMPX__Manager__c
                 
@@ -102,11 +102,12 @@ public with sharing class TRG_CAMPX_GardenHelper {
                     }
                 }
             }
-            
-            try {
-                delete taskToDelete;
-            } catch (Exception e) {
-                System.debug(e.getMessage());
+            if (!taskToDelete.isEmpty()) {
+                try {
+                    delete taskToDelete;
+                } catch (Exception e) {
+                    System.debug(e.getMessage());
+                }
             }
         }
     }
