@@ -189,10 +189,7 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
         for (CAMPX__Garden__c garden : testGardens) {
             garden.CAMPX__Manager__c = UserInfo.getUserId();
             updateGardens.add(garden);
-        }
-
-        System.debug('MVC: TEST: ' + testGardens);
-        
+        }        
         // Call the method being tested
         Test.startTest();
         
