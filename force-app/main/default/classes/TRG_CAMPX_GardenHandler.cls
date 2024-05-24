@@ -45,7 +45,7 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
      * @comments
     **************************************************************************************************/
     public override void afterInsert() {
-        TRG_CAMPX_GardenHelper.CreateTaskForNewGardeningManagers(this.listNew, null);
+        TRG_CAMPX_GardenHelper.createTaskForNewGardeningManagers(this.listNew, null);
     }
 
     /**************************************************************************************************
@@ -56,6 +56,7 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
      * @comments
     **************************************************************************************************/
     public override void afterUpdate() {
-        TRG_CAMPX_GardenHelper.CreateTaskForNewGardeningManagers(this.listNew, this.mapOld);
+        TRG_CAMPX_GardenHelper.createTaskForNewGardeningManagers(this.listNew, this.mapOld);
+        TRG_CAMPX_GardenHelper.reassingTaskWhenManagerChanges(this.listNew, this.mapOld);
     }
 }
