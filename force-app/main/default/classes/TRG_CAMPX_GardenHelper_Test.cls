@@ -274,4 +274,56 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
             System.assertEquals('Acquire Plants', currentTask.Subject, 'Task subject should match the predefined value');
         }
     }
+
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        24/05/2024
+     * @modifiedBy
+     * 
+     * @description 
+     * @comments
+    **************************************************************************************************/
+    @isTest
+    static void testDeleteTaskWhenManagerIsUnassigned() {
+        // Create test Garden records
+        List<CAMPX__Garden__c> testGardens = new List<CAMPX__Garden__c>();
+        for (Integer i = 0; i < 5; i++) {
+            CAMPX__Garden__c currentGarden = new CAMPX__Garden__c(
+                Name = 'Garden ' + i,
+                CAMPX__Manager__c = UserInfo.getUserId()
+            );
+            testGardens.add(currentGarden);
+        }
+        
+        User u = [SELECT Id FROM User WHERE Username = 'manvil95@campapexgreen.com' LIMIT 1];
+        
+        insert testGardens;
+        List<CAMPX__Garden__c> updateGardens = new List<CAMPX__Garden__c>();
+        for (CAMPX__Garden__c garden : testGardens) {
+            garden.CAMPX__Manager__c = null;
+            updateGardens.add(garden);
+        }        
+        // Call the method being tested
+        Test.startTest();
+        
+        update updateGardens;
+
+        Test.stopTest();
+
+        List<CAMPX__Garden__c> updatedGardens = [SELECT Id, CAMPX__Manager__c FROM CAMPX__Garden__c];
+        // Verify that tasks have been created for the Garden managers
+        List<Task> createdTasks = new List<Task>();
+        try {
+            createdTasks = [SELECT Id, OwnerId, WhatId, Subject FROM Task WHERE WhatId IN :updatedGardens];
+        } catch (Exception e) {
+            System.debug(e.getMessage());
+        }
+
+        System.assertEquals(true, createdTasks.isEmpty(), 'All task must be deleted');
+        
+        // Verify task ownership and subject
+        for (CAMPX__Garden__c updated : updatedGardens) {
+            System.assertEquals(null, updated.CAMPX__Manager__c, 'Task owner should match the Garden manager');
+        }
+    }
 }
