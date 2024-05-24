@@ -164,4 +164,47 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
 
         System.assertEquals(0, createdTasks.size(), 'Number of created tasks should match number of Garden records');
     }
+
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        10/05/2024
+     * @modifiedBy
+     * 
+     * @description 
+     * @comments
+    **************************************************************************************************/
+    @isTest
+    static void testCreateTaskAfterUpdateGardenWithManagerFirstTime() {
+        // Create test Garden records
+        List<CAMPX__Garden__c> testGardens = new List<CAMPX__Garden__c>();
+        for (Integer i = 0; i < 5; i++) {
+            CAMPX__Garden__c currentGarden = new CAMPX__Garden__c(
+                Name = 'Garden ' + i
+            );
+            testGardens.add(currentGarden);
+        }
+        insert testGardens;
+        
+        List<CAMPX__Garden__c> updateGardens = new List<CAMPX__Garden__c>();
+        for (CAMPX__Garden__c garden : testGardens) {
+            garden.CAMPX__Manager__c = UserInfo.getUserId();
+            updateGardens.add(garden);
+        }        
+        // Call the method being tested
+        Test.startTest();
+        
+        update updateGardens;
+
+        Test.stopTest();
+
+        // Verify that tasks have been created for the Garden managers
+        List<Task> createdTasks = [SELECT Id, OwnerId, WhatId, Subject FROM Task WHERE WhatId IN :testGardens];
+        System.assertEquals(testGardens.size(), createdTasks.size(), 'Number of created tasks should match number of Garden records');
+
+        // Verify task ownership and subject
+        for (Task currentTask : createdTasks) {
+            System.assertEquals(testGardens[0].CAMPX__Manager__c, currentTask.OwnerId, 'Task owner should match the Garden manager');
+            System.assertEquals('Acquire Plants', currentTask.Subject, 'Task subject should match the predefined value');
+        }
+    }
 }
