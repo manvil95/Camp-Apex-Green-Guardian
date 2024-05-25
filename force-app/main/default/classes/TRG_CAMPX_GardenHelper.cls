@@ -17,6 +17,67 @@ public with sharing class TRG_CAMPX_GardenHelper {
 
     /**********************************************************************************************
      * @author      manvil95
+     * @date        24/05/2024
+     * @modifiedBy
+     * 
+     * @param       newTriggerList : Trigger.new
+     * @param       oldTriggerMap  : Trigger.oldMap
+     * 
+     * @description When a new garden record is created/update and a manager is assigned/unassigned, 
+     *              the start date must be set/unset.
+     * @comments
+    **********************************************************************************************/
+    public static void setUnsetManagerStartDate(List<CAMPX__Garden__c> newTriggerList, Map<Id, CAMPX__Garden__c> oldTriggerMap) {
+        List<CAMPX__Garden__c> gardensToUpdate              = new List<CAMPX__Garden__c>();
+        List<CAMPX__Garden__c> gardensToUpdateWithDate      = new List<CAMPX__Garden__c>();
+        List<CAMPX__Garden__c> gardensToUpdateWithoutDate   = new List<CAMPX__Garden__c>();
+        
+        for (CAMPX__Garden__c currentGarden : newTriggerList) {
+            if (currentGarden.CAMPX__Manager__c != null && oldTriggerMap == null
+                    || (
+                            currentGarden.CAMPX__Manager__c != null 
+                            && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c != currentGarden.CAMPX__Manager__c
+                            && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c == null
+                        )
+            ) {
+                gardensToUpdateWithDate.add(currentGarden);
+                continue;
+            }
+            
+            try {
+                if (currentGarden.CAMPX__Manager__c == null
+                    && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c != null 
+                    && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c != currentGarden.CAMPX__Manager__c
+                ) {
+                    gardensToUpdateWithoutDate.add(currentGarden);
+                }
+            } catch (Exception e) {
+                System.debug(e.getMessage());
+            }
+        }
+
+        for (CAMPX__Garden__c currentGarden : gardensToUpdateWithDate) {
+            currentGarden.CAMPX__Manager_Start_Date__c = Date.today();
+            gardensToUpdate.add(currentGarden);
+        }
+        
+        for (CAMPX__Garden__c currentGarden : gardensToUpdateWithoutDate) {
+            currentGarden.CAMPX__Manager_Start_Date__c = null;
+            gardensToUpdate.add(currentGarden);
+        }
+
+        
+        if (!gardensToUpdate.isEmpty()) {
+            try {
+                update gardensToUpdate;
+            } catch (Exception e) {
+                System.debug(e.getMessage());
+            }
+        }
+    }
+
+    /**********************************************************************************************
+     * @author      manvil95
      * @date        10/05/2024
      * @modifiedBy
      * 
@@ -111,6 +172,7 @@ public with sharing class TRG_CAMPX_GardenHelper {
             }
         }
     }
+
     /**********************************************************************************************
      * @author      manvil95
      * @date        10/05/2024
