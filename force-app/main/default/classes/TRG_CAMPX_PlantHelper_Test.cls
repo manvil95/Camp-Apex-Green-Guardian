@@ -15,6 +15,54 @@ public with sharing class TRG_CAMPX_PlantHelper_Test {
 
     /**************************************************************************************************
      * @author      manvil95
+     * @date        25/05/2024
+     * @modifiedBy
+     * @description When a new plant record is created and associated with a garden, total count must be
+     *              set.
+     * @comments
+    **************************************************************************************************/
+    @isTest
+    static void testAggregateTotalPlantCount() {
+        List<CAMPX__Plant__c> plantsToInsert = new List<CAMPX__Plant__c>();
+        CAMPX__Garden__c garden = new CAMPX__Garden__c(
+            Name = 'Test Garden',
+            CAMPX__Sun_Exposure__c = 'Full Sun'
+        );
+        insert garden;
+
+        CAMPX__Plant__c plant = new CAMPX__Plant__c(
+            Name = 'Test Plant',
+            CAMPX__Garden__c = garden.Id,
+            CAMPX__Soil_Type__c = null,
+            CAMPX__Water__c = null,
+            CAMPX__Sunlight__c = null
+        );
+        plantsToInsert.add(plant);
+        CAMPX__Plant__c plant2 = new CAMPX__Plant__c(
+            Name = 'Test Plant2,
+            CAMPX__Garden__c = garden.Id,
+            CAMPX__Soil_Type__c = null,
+            CAMPX__Water__c = null,
+            CAMPX__Sunlight__c = null
+        );
+        plantsToInsert.add(plant2);
+
+        Test.startTest();
+        insert plantsToInsert;
+        Test.stopTest();
+
+        CAMPX__Garden__c garden = [SELECT Id, CAMPX__Total_Plant_Count__c 
+                                    FROM CAMPX__Garden__c
+                                    LIMIT 1];
+
+        List<CAMPX__Plant__c> plantsCreated = [SELECT Id, CAMPX__Garden__c FROM CAMPX__Plant__c];
+        // FINISH THAT
+        System.assertEquals('All Purpose Potting Soil', plant.CAMPX__Soil_Type__c, 'Soil Type not set');
+        System.assertEquals('Once Weekly', plant.CAMPX__Water__c, 'Watering Schedule not set');
+        System.assertEquals('Full Sun', plant.CAMPX__Sunlight__c, 'Sun Exposure not set');
+    }
+    /**************************************************************************************************
+     * @author      manvil95
      * @date        10/05/2024
      * @modifiedBy
      * @description When a new plant record is created, each field should be populated with its 
@@ -28,8 +76,6 @@ public with sharing class TRG_CAMPX_PlantHelper_Test {
             CAMPX__Sun_Exposure__c = 'Full Sun'
         );
         insert garden;
-
-        System.debug('GARDEN: ' + garden);
 
         CAMPX__Plant__c plant = new CAMPX__Plant__c(
             Name = 'Test Plant',
