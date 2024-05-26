@@ -35,6 +35,7 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
     **************************************************************************************************/
     public override void beforeInsert() {
         TRG_CAMPX_GardenHelper.initializeGardenFieldsUponRecordCreation(this.listNew);
+        TRG_CAMPX_GardenHelper.setUnsetManagerStartDate(this.listNew, null);
     }
     
     /**************************************************************************************************
@@ -46,6 +47,17 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
     **************************************************************************************************/
     public override void afterInsert() {
         TRG_CAMPX_GardenHelper.createTaskForNewGardeningManagers(this.listNew, null);
+    }
+
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        24/05/2024
+     * @modifiedBy
+     * @description Handler method on before update.
+     * @comments
+    **************************************************************************************************/
+    public override void beforeUpdate() {
+        TRG_CAMPX_GardenHelper.setUnsetManagerStartDate(this.listNew, this.mapOld);
     }
 
     /**************************************************************************************************

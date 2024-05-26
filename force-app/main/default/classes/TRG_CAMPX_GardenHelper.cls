@@ -17,6 +17,39 @@ public with sharing class TRG_CAMPX_GardenHelper {
 
     /**********************************************************************************************
      * @author      manvil95
+     * @date        24/05/2024
+     * @modifiedBy
+     * 
+     * @param       newTriggerList : Trigger.new
+     * @param       oldTriggerMap  : Trigger.oldMap
+     * 
+     * @description When a new garden record is created/update and a manager is assigned/unassigned, 
+     *              the start date must be set/unset.
+     * @comments
+    **********************************************************************************************/
+    public static void setUnsetManagerStartDate(List<CAMPX__Garden__c> newTriggerList, Map<Id, CAMPX__Garden__c> oldTriggerMap) {
+        
+        for (CAMPX__Garden__c currentGarden : newTriggerList) {
+            if ((currentGarden.CAMPX__Manager__c != null && oldTriggerMap == null)
+                    || (
+                            currentGarden.CAMPX__Manager__c != null 
+                            && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c != currentGarden.CAMPX__Manager__c
+                        )
+            ) {
+                currentGarden.CAMPX__Manager_Start_Date__c = Date.today();
+            }
+            
+            if ((currentGarden.CAMPX__Manager__c == null && oldTriggerMap == null) || (currentGarden.CAMPX__Manager__c == null
+                    && oldTriggerMap.get(currentGarden.Id) != null 
+                    && oldTriggerMap.get(currentGarden.Id).CAMPX__Manager__c != null)
+            ) {
+                currentGarden.CAMPX__Manager_Start_Date__c = null;
+            }
+        }
+    }
+
+    /**********************************************************************************************
+     * @author      manvil95
      * @date        10/05/2024
      * @modifiedBy
      * 
@@ -111,6 +144,7 @@ public with sharing class TRG_CAMPX_GardenHelper {
             }
         }
     }
+
     /**********************************************************************************************
      * @author      manvil95
      * @date        10/05/2024
@@ -175,8 +209,6 @@ public with sharing class TRG_CAMPX_GardenHelper {
      * @comments
     **********************************************************************************************/
     public static void initializeGardenFieldsUponRecordCreation(List<CAMPX__Garden__c> newTriggerList) {
-        List<CAMPX__Garden__c> gardensToInsert = new List<CAMPX__Garden__c>();
-        
         for (CAMPX__Garden__c currentGarden : newTriggerList) {
             if (currentGarden.CAMPX__Status__c == null || currentGarden.CAMPX__Status__c == '') {
                 currentGarden.CAMPX__Status__c = 'Awaiting Resources';
@@ -197,14 +229,6 @@ public with sharing class TRG_CAMPX_GardenHelper {
             if (currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c == null) {
                 currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c = 0;
             }
-            
-            gardensToInsert.add(currentGarden);
-        }
-        
-        try {
-            insert gardensToInsert;
-        } catch (Exception e) {
-            System.debug(e.getMessage());
         }
     }
 }
