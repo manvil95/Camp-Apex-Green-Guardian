@@ -38,6 +38,79 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
      * @author      manvil95
      * @date        10/05/2024
      * @modifiedBy
+     * @description When a garden record is updated and a manager is unset, start date must be blank.
+     * @comments
+    **************************************************************************************************/
+    @isTest
+    static void testUnsetManagerStartDate() {
+        // Create test Garden records
+        List<CAMPX__Garden__c> testGardens = new List<CAMPX__Garden__c>();
+        for (Integer i = 0; i < 5; i++) {
+            CAMPX__Garden__c currentGarden = new CAMPX__Garden__c(
+                Name = 'Garden ' + i,
+                CAMPX__Manager__c = UserInfo.getUserId() // Use the current user as a sample Garden manager
+            );
+            testGardens.add(currentGarden);
+        }
+        insert testGardens;
+
+        for (CAMPX__Garden__c currentGarden : testGardens) {
+            currentGarden.CAMPX__Manager__c = null;
+        }
+
+        // Call the method being tested
+        Test.startTest();
+        update testGardens;
+        Test.stopTest();
+
+        // Verify that tasks have been created for the Garden managers
+        List<CAMPX__Garden__c> gardenInserted = [SELECT Id, CAMPX__Manager__c, CAMPX__Manager_Start_Date__c FROM CAMPX__Garden__c];
+
+        // Verify task ownership and subject
+        for (CAMPX__Garden__c currentGarden : gardenInserted) {
+            System.assertEquals(null, currentGarden.CAMPX__Manager_Start_Date__c, 'Expected date must be the same as today.');
+            System.assertEquals(null, currentGarden.CAMPX__Manager__c, 'The Manager Id must be the same.');
+        }
+    }
+
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        10/05/2024
+     * @modifiedBy
+     * @description When a new garden record is created and a manager is set, start date must be filled.
+     * @comments
+    **************************************************************************************************/
+    @isTest
+    static void testSetManagerStartDate() {
+        // Create test Garden records
+        List<CAMPX__Garden__c> testGardens = new List<CAMPX__Garden__c>();
+        for (Integer i = 0; i < 5; i++) {
+            CAMPX__Garden__c currentGarden = new CAMPX__Garden__c(
+                Name = 'Garden ' + i,
+                CAMPX__Manager__c = UserInfo.getUserId() // Use the current user as a sample Garden manager
+            );
+            testGardens.add(currentGarden);
+        }
+        
+        // Call the method being tested
+        Test.startTest();
+        insert testGardens;
+        Test.stopTest();
+
+        // Verify that tasks have been created for the Garden managers
+        List<CAMPX__Garden__c> gardenInserted = [SELECT Id, CAMPX__Manager__c, CAMPX__Manager_Start_Date__c FROM CAMPX__Garden__c];
+
+        // Verify task ownership and subject
+        for (CAMPX__Garden__c currentGarden : gardenInserted) {
+            System.assertEquals(Date.today(), currentGarden.CAMPX__Manager_Start_Date__c, 'Expected date must be the same as today.');
+            System.assertEquals(UserInfo.getUserId(), currentGarden.CAMPX__Manager__c, 'The Manager Id must be the same.');
+        }
+    }
+
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        10/05/2024
+     * @modifiedBy
      * @description When a new garden record is created, each field should be populated with its 
      *              predefined default value if it's blank.
      * @comments
