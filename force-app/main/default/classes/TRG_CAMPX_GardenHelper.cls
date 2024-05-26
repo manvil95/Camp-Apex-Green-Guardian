@@ -82,10 +82,8 @@ public with sharing class TRG_CAMPX_GardenHelper {
             }
         }
         
-        try {
+        if (!taskToInsert.isEmpty()) {
             insert taskToInsert;
-        } catch (Exception e) {
-            System.debug(e.getMessage());
         }
     }
 
@@ -136,11 +134,7 @@ public with sharing class TRG_CAMPX_GardenHelper {
                 }
             }
             if (!taskToDelete.isEmpty()) {
-                try {
                     delete taskToDelete;
-                } catch (Exception e) {
-                    System.debug(e.getMessage());
-                }
             }
         }
     }
@@ -189,10 +183,8 @@ public with sharing class TRG_CAMPX_GardenHelper {
                 }
             }
             
-            try {
+            if (!taskToUpdate.isEmpty()) {
                 update taskToUpdate;
-            } catch (Exception e) {
-                System.debug(e.getMessage());
             }
         }
     }
