@@ -10,6 +10,6 @@
  * @description     Trigger on CAMPX__Plant__c.
  * @comments
  **************************************************************************************************/
-trigger TRG_CAMPX_Plant on CAMPX__Plant__c (before insert) {
+trigger TRG_CAMPX_Plant on CAMPX__Plant__c (before insert, after insert, after update, after delete) {
     new TRG_CAMPX_PlantHandler().run();
 }
