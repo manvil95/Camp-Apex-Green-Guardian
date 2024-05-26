@@ -31,7 +31,7 @@ jobs:
         if: ${{ github.actor != 'dependabot[bot]' }}
         steps:
             # Now we install nodejs in the VM, and specify the latest LTS version
-            - uses: actions/setup-node@v3
+            - uses: actions/setup-node@v4
               with:
                 node-version: 'lts/*'
 
@@ -48,7 +48,7 @@ jobs:
             # to the destination org
 
             - name: 'Checkout source code'
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
               with:
                 fetch-depth: 0
             
@@ -116,7 +116,11 @@ jobs:
 
             # Install SFDX scanner
             - name: 'Installing SFDX scanner'
-              run: sfdx plugins:install @salesforce/sfdx-scanner
+              # Previous version
+              # run: sfdx plugins:install @salesforce/sfdx-scanner
+
+              # Solved plugins warnings:
+              run: sf plugins install @salesforce/sfdx-scanner@latest-beta
 
             # Prior to setting up this workflow, you have to create a Github Secret
             # that contains the sfdx url of the integration/qa org.
