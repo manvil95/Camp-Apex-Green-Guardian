@@ -18,6 +18,49 @@ public with sharing class TRG_CAMPX_PlantHelper {
      * @modifiedBy
      * 
      * @param       newTriggerList : Trigger.new
+     * @param       oldTriggerMap  : Trigger.oldMap
+     * 
+     * @description When a Plant record is associated with a garden, the total count of the garden
+     *              must set to the total count of the plants.
+     * @comments
+    **********************************************************************************************/
+    public static void aggregateTotalPlantCount(List<CAMPX__Plant__c> newTriggerList, Map<Id, CAMPX__Plant__c> oldMap) {
+        List<CAMPX__Garden__c> gardensToUpdate;
+        Set<Id> gardenIds = new Set<Id>();
+
+        for (CAMPX__Plant__c currentPlant : newTriggerList) {
+            gardenIds.add(currentPlant.CAMPX__Garden__c);
+
+            if (oldMap != null && currentPlant.CAMPX__Garden__c != oldMap.get(currentPlant.Id).CAMPX__Garden__c) {
+                gardenIds.add(oldMap.get(currentPlant.Id).CAMPX__Garden__c);
+            }
+        }
+        if (!gardenIds.isEmpty()) {
+            
+            gardensToUpdate = [SELECT Id, 
+                                    CAMPX__Total_Plant_Count__c, 
+                                    (   
+                                        SELECT Id 
+                                        FROM CAMPX__Plants__r
+                                    )
+                            FROM CAMPX__Garden__c
+                            WHERE Id IN :gardenIds
+                            WITH USER_MODE];
+                            
+            for (CAMPX__Garden__c currentGarden : gardensToUpdate) {
+                currentGarden.CAMPX__Total_Plant_Count__c = currentGarden.CAMPX__Plants__r.size();
+            }
+
+            update gardensToUpdate;
+        }
+    }
+
+    /**********************************************************************************************
+     * @author      manvil95
+     * @date        10/05/2024
+     * @modifiedBy
+     * 
+     * @param       newTriggerList : Trigger.new
      * 
      * @description When a new Plant record is created, each field should be populated with its 
      *              predefined default value if it's blank.
