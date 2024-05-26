@@ -36,7 +36,7 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
 
     /**************************************************************************************************
      * @author      manvil95
-     * @date        10/05/2024
+     * @date        25/05/2024
      * @modifiedBy
      * @description When a garden record is updated and a manager is unset, start date must be blank.
      * @comments
@@ -75,7 +75,7 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
 
     /**************************************************************************************************
      * @author      manvil95
-     * @date        10/05/2024
+     * @date        25/05/2024
      * @modifiedBy
      * @description When a new garden record is created and a manager is set, start date must be filled.
      * @comments
