@@ -36,4 +36,37 @@ public with sharing class TRG_CAMPX_PlantHandler extends TriggerHandler {
     public override void beforeInsert() { 
         TRG_CAMPX_PlantHelper.initializePlantFields(this.listNew);
     }
+
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        25/05/2024
+     * @modifiedBy
+     * @description Handler method on after insert.
+     * @comments
+    **************************************************************************************************/
+    public override void afterInsert() { 
+        TRG_CAMPX_PlantHelper.aggregateTotalPlantCount(this.listNew, null);
+    }
+    
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        25/05/2024
+     * @modifiedBy
+     * @description Handler method on after update.
+     * @comments
+     **************************************************************************************************/
+    public override void afterUpdate() { 
+        TRG_CAMPX_PlantHelper.aggregateTotalPlantCount(this.listNew, this.mapOld);
+    }
+    
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        25/05/2024
+     * @modifiedBy
+     * @description Handler method on after delete.
+     * @comments
+    **************************************************************************************************/
+    public override void afterDelete() {
+        TRG_CAMPX_PlantHelper.aggregateTotalPlantCount(this.listOld, null);
+    }
 }
