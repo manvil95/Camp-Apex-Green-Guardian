@@ -17,8 +17,7 @@ async function extractTests(){
         if(line.includes('Apex::[') && line.includes(']::Apex')){
             
             let tests = line.substring(8,line.length-7)
-            tests = tests.replace(',', ' --array-flag ')
-            tests = ' --array-flag ' + tests
+            tests = ' --array-flag ' + tests.replace(',', ' --array-flag ')
             await fs.promises.writeFile(testsFile,tests)
             await fs.promises.appendFile(testsFile,' ')
         }
