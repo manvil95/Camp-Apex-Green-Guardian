@@ -10,11 +10,41 @@
  * @description     Helper class for on TRG_CAMPX_GardenHandler.
  * @comments
  **************************************************************************************************/
+@SuppressWarnings('PMD.CognitiveComplexity')
 public with sharing class TRG_CAMPX_GardenHelper {
     
     private static final String NEW_TASK_SUBJECT = 'Acquire Plants';
     private static final String STATUS_COMPLETED = 'Completed';
 
+    /**********************************************************************************************
+     * @author      manvil95
+     * @date        04/06/2024
+     * @modifiedBy
+     * 
+     * @param       newTriggerList : Trigger.new
+     * @param       oldTriggerMap  : Trigger.oldMap
+     * 
+     * @description Method to calculate the capacity of a garden.
+     * @comments
+    **********************************************************************************************/
+    public static void calculateCapacity(List<CAMPX__Garden__c> newTriggerList, Map<Id, CAMPX__Garden__c> oldTriggerMap) {
+        for (CAMPX__Garden__c currentGarden : newTriggerList) {
+            if ((currentGarden.CAMPX__Total_Plant_Count__c == 0 || currentGarden.CAMPX__Max_Plant_Count__c == 0 
+                    || currentGarden.CAMPX__Total_Plant_Count__c == null || currentGarden.CAMPX__Max_Plant_Count__c == null) 
+                    && (oldTriggerMap != null || oldTriggerMap == null)
+            ) {
+                currentGarden.CAMPX__Capacity__c = 0;
+                continue;
+            }
+
+            if (currentGarden.CAMPX__Total_Plant_Count__c != null && currentGarden.CAMPX__Max_Plant_Count__c != null && (oldTriggerMap != null || oldTriggerMap == null)) {
+                currentGarden.CAMPX__Capacity__c = (currentGarden.CAMPX__Total_Plant_Count__c / currentGarden.CAMPX__Max_Plant_Count__c * 100);
+                System.debug('NOT 0 -> ' + currentGarden.CAMPX__Capacity__c);
+                continue;
+            }
+        }
+    }
+    
     /**********************************************************************************************
      * @author      manvil95
      * @date        24/05/2024
@@ -28,7 +58,6 @@ public with sharing class TRG_CAMPX_GardenHelper {
      * @comments
     **********************************************************************************************/
     public static void setUnsetManagerStartDate(List<CAMPX__Garden__c> newTriggerList, Map<Id, CAMPX__Garden__c> oldTriggerMap) {
-        
         for (CAMPX__Garden__c currentGarden : newTriggerList) {
             if ((currentGarden.CAMPX__Manager__c != null && oldTriggerMap == null)
                     || (

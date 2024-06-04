@@ -36,6 +36,74 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
 
     /**************************************************************************************************
      * @author      manvil95
+     * @date        04/06/2024
+     * @modifiedBy
+     * @description When a garden record is updated the capacity is calculated.
+     * @comments
+    **************************************************************************************************/
+    @isTest
+    static void calculateCapacityOnUpdate() {
+        List<CAMPX__Garden__c> testGardens = new List<CAMPX__Garden__c>();
+        for (Integer i = 0; i < 5; i++) {
+            CAMPX__Garden__c currentGarden = new CAMPX__Garden__c(
+                Name = 'Garden ' + i,
+                CAMPX__Manager__c = UserInfo.getUserId(),
+                CAMPX__Total_Plant_Count__c = 50,
+                CAMPX__Max_Plant_Count__c = 100
+            );
+            testGardens.add(currentGarden);
+        }
+        
+        insert testGardens;
+        
+        for (CAMPX__Garden__c campx : testGardens) {
+            campx.CAMPX__Total_Plant_Count__c = 51;
+        }
+        
+        Test.startTest();
+        update testGardens;
+        Test.stopTest();
+
+        List<CAMPX__Garden__c> gardenInserted = [SELECT Id, CAMPX__Capacity__c FROM CAMPX__Garden__c];
+
+        for (CAMPX__Garden__c currentGarden : gardenInserted) {
+            System.assertEquals(51, currentGarden.CAMPX__Capacity__c, 'Capacity is not the expected.');
+        }
+    }
+
+    /**************************************************************************************************
+     * @author      manvil95
+     * @date        04/06/2024
+     * @modifiedBy
+     * @description When a garden record is created the capacity is calculated.
+     * @comments
+    **************************************************************************************************/
+    @isTest
+    static void calculateCapacity() {
+        List<CAMPX__Garden__c> testGardens = new List<CAMPX__Garden__c>();
+        for (Integer i = 0; i < 5; i++) {
+            CAMPX__Garden__c currentGarden = new CAMPX__Garden__c(
+                Name = 'Garden ' + i,
+                CAMPX__Manager__c = UserInfo.getUserId(),
+                CAMPX__Total_Plant_Count__c = 50,
+                CAMPX__Max_Plant_Count__c = 100
+            );
+            testGardens.add(currentGarden);
+        }
+        
+        Test.startTest();
+        insert testGardens;
+        Test.stopTest();
+
+        List<CAMPX__Garden__c> gardenInserted = [SELECT Id, CAMPX__Capacity__c FROM CAMPX__Garden__c];
+
+        for (CAMPX__Garden__c currentGarden : gardenInserted) {
+            System.assertEquals(50, currentGarden.CAMPX__Capacity__c, 'Capacity is not the expected.');
+        }
+    }
+
+    /**************************************************************************************************
+     * @author      manvil95
      * @date        25/05/2024
      * @modifiedBy
      * @description When a garden record is updated and a manager is unset, start date must be blank.
