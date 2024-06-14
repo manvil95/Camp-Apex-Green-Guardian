@@ -43,6 +43,7 @@
         <members>CAMPX__Plant__c.CAMPX__Sunlight__c</members>
         <members>CAMPX__Plant__c.CAMPX__Type__c</members>
         <members>CAMPX__Plant__c.CAMPX__Water__c</members>
+        <members>CAMPX__Plant__c.MV_FOR_IsHealthy__c</members>
         <name>CustomField</name>
     </types>
     <types>
