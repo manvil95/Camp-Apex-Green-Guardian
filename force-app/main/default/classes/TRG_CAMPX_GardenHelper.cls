@@ -18,6 +18,33 @@ public with sharing class TRG_CAMPX_GardenHelper {
 
     /**********************************************************************************************
      * @author      manvil95
+     * @date        13/06/2024
+     * @modifiedBy
+     * 
+     * @param       newTriggerList : Trigger.new
+     * @param       oldTriggerMap  : Trigger.oldMap
+     * 
+     * @description Method to calculate the health index.
+     * @comments
+    **********************************************************************************************/
+    public static void calculateHealthIndex(List<CAMPX__Garden__c> newTriggerList, Map<Id, CAMPX__Garden__c> oldTriggerMap) {
+        for (CAMPX__Garden__c currentGarden : newTriggerList) {
+            if (
+                    oldTriggerMap == null 
+                    || (currentGarden.CAMPX__Total_Plant_Count__c != oldTriggerMap.get(currentGarden.Id).CAMPX__Total_Plant_Count__c)
+                    || (currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c != oldTriggerMap.get(currentGarden.Id).CAMPX__Total_Unhealthy_Plant_Count__c)
+            ) {
+                if (currentGarden.CAMPX__Total_Plant_Count__c != null && currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c != null && currentGarden.CAMPX__Total_Plant_Count__c != 0) {
+                    currentGarden.CAMPX__Health_Index__c = ((currentGarden.CAMPX__Total_Plant_Count__c - currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c) / currentGarden.CAMPX__Total_Plant_Count__c) * 100;
+                } else {
+                    currentGarden.CAMPX__Health_Index__c = 0;
+                }
+            }
+        }
+    }
+
+    /**********************************************************************************************
+     * @author      manvil95
      * @date        04/06/2024
      * @modifiedBy
      * 
