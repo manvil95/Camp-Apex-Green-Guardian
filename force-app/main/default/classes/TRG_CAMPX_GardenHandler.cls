@@ -37,6 +37,7 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
         TRG_CAMPX_GardenHelper.initializeGardenFieldsUponRecordCreation(this.listNew);
         TRG_CAMPX_GardenHelper.setUnsetManagerStartDate(this.listNew, null);
         TRG_CAMPX_GardenHelper.calculateCapacity(this.listNew, null);
+        TRG_CAMPX_GardenHelper.calculateHealthIndex(this.listNew, null);
     }
     
     /**************************************************************************************************
@@ -60,6 +61,7 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
     public override void beforeUpdate() {
         TRG_CAMPX_GardenHelper.setUnsetManagerStartDate(this.listNew, this.mapOld);
         TRG_CAMPX_GardenHelper.calculateCapacity(this.listNew, this.mapOld);
+        TRG_CAMPX_GardenHelper.calculateHealthIndex(this.listNew, this.mapOld);
     }
 
     /**************************************************************************************************
