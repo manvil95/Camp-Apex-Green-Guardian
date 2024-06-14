@@ -13,9 +13,56 @@
 @SuppressWarnings('PMD.CognitiveComplexity')
 public with sharing class TRG_CAMPX_GardenHelper {
     
-    private static final String NEW_TASK_SUBJECT = 'Acquire Plants';
-    private static final String STATUS_COMPLETED = 'Completed';
+    private static final String NEW_TASK_SUBJECT            = 'Acquire Plants';
+    private static final String STATUS_COMPLETED            = 'Completed';
+    private static final String STATUS_PERMANENT_CLOSURE    = 'Permanent Closure';
+	private static final String STATUS_OPERATIONAL          = 'Operational';
+	private static final String STATUS_TEMPORARY_CLOSURE    = 'Temporary Closure';
+	private static final String STATUS_OVER_CAPACITY        = 'Over Capacity';
+	private static final String STATUS_AWAITING_RESOURCES   = 'Awaiting Resources';
 
+    /**********************************************************************************************
+     * @author      manvil95
+     * @date        13/06/2024
+     * @modifiedBy
+     * 
+     * @param       newTriggerList : Trigger.new
+     * @param       oldTriggerMap  : Trigger.oldMap
+     * 
+     * @description Method to calculate the health index.
+     * @comments
+    **********************************************************************************************/
+    public static void setGardenStatus(List<CAMPX__Garden__c> newTriggerList, Map<Id,CAMPX__Garden__c> oldTriggerMap) {
+		for (CAMPX__Garden__c currentGarden : newTriggerList) {  
+			if (currentGarden.CAMPX__Status__c != STATUS_PERMANENT_CLOSURE
+				&& (oldTriggerMap == null 
+				|| (currentGarden.CAMPX__Total_Plant_Count__c      != oldTriggerMap.get(currentGarden.Id).CAMPX__Total_Plant_Count__c) 
+				|| (currentGarden.CAMPX__Capacity__c               != oldTriggerMap.get(currentGarden.Id).CAMPX__Capacity__c) 
+				|| (currentGarden.CAMPX__Health_Index__c           != oldTriggerMap.get(currentGarden.Id).CAMPX__Health_Index__c) 
+				|| (currentGarden.CAMPX__Minimum_Plant_Count__c    != oldTriggerMap.get(currentGarden.Id).CAMPX__Minimum_Plant_Count__c))
+            ) {
+                if (currentGarden.CAMPX__Capacity__c >= 70 
+                        && currentGarden.CAMPX__Capacity__c <= 100 
+                        && currentGarden.CAMPX__Total_Plant_Count__c >= currentGarden.CAMPX__Minimum_Plant_Count__c 
+                        && currentGarden.CAMPX__Health_Index__c >= 70
+                ) {
+                    currentGarden.CAMPX__Status__c = STATUS_OPERATIONAL;	
+                } else if (currentGarden.CAMPX__Capacity__c == 0) {
+                    currentGarden.CAMPX__Status__c = STATUS_TEMPORARY_CLOSURE;
+                } else if (currentGarden.CAMPX__Capacity__c > 100) {
+                    currentGarden.CAMPX__Status__c = STATUS_OVER_CAPACITY;
+                } else if ((currentGarden.CAMPX__Capacity__c > 0
+                        && currentGarden.CAMPX__Capacity__c < 70) 
+                        || currentGarden.CAMPX__Health_Index__c < 70 
+                        || currentGarden.CAMPX__Total_Plant_Count__c < currentGarden.CAMPX__Minimum_Plant_Count__c) {
+                    currentGarden.CAMPX__Status__c = STATUS_AWAITING_RESOURCES;
+                } else {
+                    currentGarden.CAMPX__Status__c = '';
+                }
+            }
+		}
+	}
+    
     /**********************************************************************************************
      * @author      manvil95
      * @date        13/06/2024

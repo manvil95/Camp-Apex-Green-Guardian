@@ -209,7 +209,7 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
                                         FROM CAMPX__Garden__c 
                                         WHERE Id = :garden.Id];
 
-        System.assertEquals('Operational', gardenAfter.CAMPX__Status__c, 'The expected status is not the same.');
+        System.assertEquals('Awaiting Resources', gardenAfter.CAMPX__Status__c, 'The expected status is not the same.');
         System.assertEquals(20, gardenAfter.CAMPX__Max_Plant_Count__c, 'The expected Max plant count is not the same.');
         System.assertEquals(2, gardenAfter.CAMPX__Minimum_Plant_Count__c, 'The expected Minimum plant count is not the same.');
         System.assertEquals(10, gardenAfter.CAMPX__Total_Plant_Count__c, 'The expected total plant count is not the same.');
@@ -244,7 +244,7 @@ public with sharing class TRG_CAMPX_GardenHelper_Test {
                                         FROM CAMPX__Garden__c 
                                         WHERE Id = :garden.Id];
 
-        System.assertEquals('Awaiting Resources', gardenAfter.CAMPX__Status__c, 'The expected status is not the same.');
+        System.assertEquals('Temporary Closure', gardenAfter.CAMPX__Status__c, 'The expected status is not the same.');
         System.assertEquals(100, gardenAfter.CAMPX__Max_Plant_Count__c, 'The expected Max plant count is not the same.');
         System.assertEquals(1, gardenAfter.CAMPX__Minimum_Plant_Count__c, 'The expected Minimum plant count is not the same.');
         System.assertEquals(0, gardenAfter.CAMPX__Total_Plant_Count__c, 'The expected total plant count is not the same.');

@@ -38,6 +38,7 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
         TRG_CAMPX_GardenHelper.setUnsetManagerStartDate(this.listNew, null);
         TRG_CAMPX_GardenHelper.calculateCapacity(this.listNew, null);
         TRG_CAMPX_GardenHelper.calculateHealthIndex(this.listNew, null);
+        TRG_CAMPX_GardenHelper.setGardenStatus(this.listNew, null);
     }
     
     /**************************************************************************************************
@@ -50,7 +51,7 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
     public override void afterInsert() {
         TRG_CAMPX_GardenHelper.createTaskForNewGardeningManagers(this.listNew, null);
     }
-
+    
     /**************************************************************************************************
      * @author      manvil95
      * @date        24/05/2024
@@ -62,6 +63,7 @@ public with sharing class TRG_CAMPX_GardenHandler extends TriggerHandler{
         TRG_CAMPX_GardenHelper.setUnsetManagerStartDate(this.listNew, this.mapOld);
         TRG_CAMPX_GardenHelper.calculateCapacity(this.listNew, this.mapOld);
         TRG_CAMPX_GardenHelper.calculateHealthIndex(this.listNew, this.mapOld);
+        TRG_CAMPX_GardenHelper.setGardenStatus(this.listNew, this.mapOld);
     }
 
     /**************************************************************************************************
