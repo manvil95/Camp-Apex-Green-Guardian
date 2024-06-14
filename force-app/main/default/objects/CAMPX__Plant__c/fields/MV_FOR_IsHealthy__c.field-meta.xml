@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MV_FOR_IsHealthy__c</fullName>
+    <description>Field to indicate whether a plant is healthy or not depending on its status.</description>
+    <externalId>false</externalId>
+    <formula>ISPICKVAL(CAMPX__Status__c, &apos;Healthy&apos;)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Is Healthy</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

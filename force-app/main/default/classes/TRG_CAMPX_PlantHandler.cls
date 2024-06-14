@@ -46,6 +46,7 @@ public with sharing class TRG_CAMPX_PlantHandler extends TriggerHandler {
     **************************************************************************************************/
     public override void afterInsert() { 
         TRG_CAMPX_PlantHelper.aggregateTotalPlantCount(this.listNew, null);
+        TRG_CAMPX_PlantHelper.calculateUnhealthyPlantCount(this.listNew, null);
     }
     
     /**************************************************************************************************
@@ -57,6 +58,7 @@ public with sharing class TRG_CAMPX_PlantHandler extends TriggerHandler {
      **************************************************************************************************/
     public override void afterUpdate() { 
         TRG_CAMPX_PlantHelper.aggregateTotalPlantCount(this.listNew, this.mapOld);
+        TRG_CAMPX_PlantHelper.calculateUnhealthyPlantCount(this.listNew, this.mapOld);
     }
     
     /**************************************************************************************************
@@ -68,5 +70,6 @@ public with sharing class TRG_CAMPX_PlantHandler extends TriggerHandler {
     **************************************************************************************************/
     public override void afterDelete() {
         TRG_CAMPX_PlantHelper.aggregateTotalPlantCount(this.listOld, null);
+        TRG_CAMPX_PlantHelper.calculateUnhealthyPlantCount(this.listOld, null);
     }
 }

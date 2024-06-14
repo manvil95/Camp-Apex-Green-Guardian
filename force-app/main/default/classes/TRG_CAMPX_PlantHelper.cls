@@ -12,6 +12,59 @@
  **************************************************************************************************/
 public with sharing class TRG_CAMPX_PlantHelper {
     
+    private static final String ALL_PURPOSE_POTTING_SOIL    = 'All Purpose Potting Soil';
+    private static final String ONCE_WEEKLY                 = 'Once Weekly';
+    private static final String PARTIAL_SUN                 = 'Partial Sun';
+
+    /**********************************************************************************************
+     * @author      manvil95
+     * @date        13/06/2024
+     * @modifiedBy
+     * 
+     * @param       newTriggerList : Trigger.new
+     * @param       oldTriggerMap  : Trigger.oldMap
+     * 
+     * @description Method to calculate the total unhealthy plant count
+     * @comments
+    **********************************************************************************************/
+    public static void calculateUnhealthyPlantCount(List<CAMPX__Plant__c> newTriggerList, Map<Id, CAMPX__Plant__c> oldTriggerMap) {
+        Set<Id> uniqueGardenIds                 = new Set<Id>();
+        List<CAMPX__Garden__c> gardensToUpdate  = new List<CAMPX__Garden__c>();
+
+        for (CAMPX__Plant__c currentPlant : newTriggerList) {
+            if (currentPlant.MV_FOR_IsHealthy__c != true 
+                    || (oldTriggerMap != null && currentPlant.MV_FOR_IsHealthy__c != oldTriggerMap.get(currentPlant.Id).MV_FOR_IsHealthy__c)) {
+                uniqueGardenIds.add(currentPlant.CAMPX__Garden__c);
+            }
+            if (oldTriggerMap != null && currentPlant.CAMPX__Garden__c != oldTriggerMap.get(currentPlant.Id).CAMPX__Garden__c) {
+                uniqueGardenIds.add(oldTriggerMap.get(currentPlant.Id).CAMPX__Garden__c);
+            }
+        }
+
+        if (!uniqueGardenIds.isEmpty()) {
+            gardensToUpdate = [SELECT Id, 
+                                (
+                                    SELECT Id 
+                                    FROM CAMPX__Plants__r 
+                                    WHERE MV_FOR_IsHealthy__c != true
+                                )
+                            FROM CAMPX__Garden__c 
+                            WHERE Id IN :uniqueGardenIds
+                            WITH USER_MODE];
+                            
+            for (CAMPX__Garden__c currentGarden : gardensToUpdate) {
+                currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c = currentGarden.CAMPX__Plants__r.size();
+                System.debug('MVC count ' + currentGarden.CAMPX__Total_Unhealthy_Plant_Count__c);
+            }
+        }
+
+        try {
+            update gardensToUpdate;
+        } catch (Exception e) {
+            System.debug(e.getMessage());
+        } 
+    }
+
     /**********************************************************************************************
      * @author      manvil95
      * @date        10/05/2024
@@ -83,18 +136,18 @@ public with sharing class TRG_CAMPX_PlantHelper {
         
         for (CAMPX__Plant__c currentPlant : newTriggerList) {
             if (currentPlant.CAMPX__Soil_Type__c == null) {
-                currentPlant.CAMPX__Soil_Type__c = 'All Purpose Potting Soil';
+                currentPlant.CAMPX__Soil_Type__c = ALL_PURPOSE_POTTING_SOIL;
             }
             
             if (currentPlant.CAMPX__Water__c == null) {
-                currentPlant.CAMPX__Water__c = 'Once Weekly';
+                currentPlant.CAMPX__Water__c = ONCE_WEEKLY;
             }
             
             if (currentPlant.CAMPX__Garden__c != null && gardenParents.get(currentPlant.CAMPX__Garden__c).CAMPX__Sun_Exposure__c != '' && gardenParents.get(currentPlant.CAMPX__Garden__c).CAMPX__Sun_Exposure__c != null) {
                 currentPlant.CAMPX__Sunlight__c = gardenParents.get(currentPlant.CAMPX__Garden__c).CAMPX__Sun_Exposure__c;
             }
             else if (currentPlant.CAMPX__Sunlight__c == null) {
-                currentPlant.CAMPX__Sunlight__c = 'Partial Sun';
+                currentPlant.CAMPX__Sunlight__c = PARTIAL_SUN;
             }
             
             plantsToInsert.add(currentPlant);
