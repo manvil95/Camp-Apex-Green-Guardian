@@ -55,5 +55,12 @@
         <members>CAMPX__Garden__c.CAMPX__All</members>
         <name>ListView</name>
     </types>
+    <types>
+        <members>CAMPX__Garden__c.Core_BlankValues</members>
+        <members>CAMPX__Garden__c.Core_NegativeValues</members>
+        <members>CAMPX__Garden__c.Core_WithinRange</members>
+        <members>CAMPX__Plant__c.Core_ClosedGardens</members>
+        <name>ValidationRule</name>
+    </types>
     <version>59.0</version>
 </Package>
