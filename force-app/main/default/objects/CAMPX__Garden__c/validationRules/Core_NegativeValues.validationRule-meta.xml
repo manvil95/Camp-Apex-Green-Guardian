@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Core_NegativeValues</fullName>
+    <active>true</active>
+    <description>Validation that prevent users from saving a Garden record with negative values in specific fields.</description>
+    <errorConditionFormula>OR(
+				CAMPX__Max_Plant_Count__c &lt; 0,
+				CAMPX__Minimum_Plant_Count__c	&lt; 0,
+				CAMPX__Total_Plant_Count__c &lt; 0,
+				CAMPX__Total_Plant_Count__c &lt; 0
+				)</errorConditionFormula>
+    <errorMessage>Plant Count fields must be greater than or equal to zero.</errorMessage>
+</ValidationRule>
