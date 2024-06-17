@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Core_BlankValues</fullName>
+    <active>true</active>
+    <description>Validation that prevent users from saving a garden record with essential fields blank.</description>
+    <errorConditionFormula>IF(
+					CAMPX__Total_Plant_Count__c &gt; 0,
+					OR(
+									ISBLANK(CAMPX__Max_Plant_Count__c),
+									ISBLANK(CAMPX__Minimum_Plant_Count__c)
+					),
+					false
+	)</errorConditionFormula>
+    <errorMessage>Maximum and Minimum Plant Count fields cannot be blank when there are plants in the Garden.</errorMessage>
+</ValidationRule>
